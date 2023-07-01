@@ -35,9 +35,13 @@ public class TeleportCommandMixin {
         @Coerce Object facingLocation,
         CallbackInfo ci
     ) throws CommandSyntaxException {
-        // This cast is guaranteed to work because of where we inject.
-        var targetPlayer = (ServerPlayerEntity)target;
-        var targetPlayerData = ((ServerPlayerEntityAccess)target).ec$getPlayerData();
-        targetPlayerData.setPreviousLocation(new MinecraftLocation(targetPlayer));
+        if (target instanceof ServerPlayerEntity) {
+            // This cast is guaranteed to work because of where we inject.
+            var targetPlayer = (ServerPlayerEntity)target;
+            var targetPlayerData = ((ServerPlayerEntityAccess)target).ec$getPlayerData();
+            if (!targetPlayer.isSpectator()) {
+                targetPlayerData.setPreviousLocation(new MinecraftLocation(targetPlayer));
+            }
+        }
     }
 }
