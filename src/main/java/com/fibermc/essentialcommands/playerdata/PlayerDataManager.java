@@ -46,9 +46,9 @@ public class PlayerDataManager {
 
     public PlayerDataManager() {
         instance = this;
-        this.changedNicknames = new LinkedList<>();
-        this.changedTeams = new LinkedList<>();
-        this.nextTickTasks = new LinkedList<>();
+        this.changedNicknames = new ArrayList<>();
+        this.changedTeams = new ArrayList<>();
+        this.nextTickTasks = new ArrayList<>();
         this.dataMap = new ConcurrentHashMap<>();
     }
 
@@ -83,6 +83,7 @@ public class PlayerDataManager {
     public static boolean exists() {
         return instance != null;
     }
+
     public static PlayerDataManager getInstance() {
         return instance != null ? instance : new PlayerDataManager();
     }
@@ -118,11 +119,10 @@ public class PlayerDataManager {
         }
 
         if (!nextTickTasks.isEmpty()) {
-            Iterator<Runnable> tasks = nextTickTasks.listIterator();
-            while (tasks.hasNext()) {
-                tasks.next().run();
-                tasks.remove();
+            for (Runnable runnable : nextTickTasks) {
+                runnable.run();
             }
+            nextTickTasks.clear();
         }
 
         TICK_EVENT.invoker().onTick(this, server);
