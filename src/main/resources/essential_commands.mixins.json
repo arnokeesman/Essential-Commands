@@ -12,7 +12,8 @@
     "ServerScoreboardMixin",
     "SleepManagerMixin",
     "TeleportCommandMixin",
-    "WorldSaveHandlerMixin"
+    "WorldSaveHandlerMixin",
+    "EntitySelectorMixin"
   ],
   "client": [
   ],
