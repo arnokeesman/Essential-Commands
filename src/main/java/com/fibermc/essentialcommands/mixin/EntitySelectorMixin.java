@@ -31,7 +31,10 @@ public class EntitySelectorMixin {
         locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
     void checkNicknames(ServerCommandSource source, CallbackInfoReturnable<List<ServerPlayerEntity>> cir) {
         if (!EssentialCommands.CONFIG.NICKNAME_ABOVE_HEAD) return;
-        List<PlayerData> nicknamePlayers = PlayerDataManager.getInstance().getPlayerDataMatchingNickname(this.playerName);
+        String playerName = this.playerName.startsWith(EssentialCommands.CONFIG.NICKNAME_PREFIX.getString())
+            ? this.playerName.substring(EssentialCommands.CONFIG.NICKNAME_PREFIX.getString().length())
+            : this.playerName;
+        List<PlayerData> nicknamePlayers = PlayerDataManager.getInstance().getPlayerDataMatchingNickname(playerName);
         if (nicknamePlayers.size() == 1) cir.setReturnValue(nicknamePlayers.stream().map(PlayerData::getPlayer).toList());
     }
 }

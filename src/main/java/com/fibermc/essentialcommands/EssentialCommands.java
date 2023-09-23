@@ -11,6 +11,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.mojang.brigadier.StringReader;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -52,6 +54,19 @@ public final class EssentialCommands implements ModInitializer {
 
         BACKING_CONFIG.registerLoadHandler((backingConfig) -> CONFIG = EssentialCommandsConfigSnapshot.create(backingConfig));
         BACKING_CONFIG.loadOrCreateProperties();
+
+        if (CONFIG.NICKNAME_ABOVE_HEAD && !CONFIG.NICKNAME_PREFIX.getString().isEmpty()) {
+            StringBuilder problematicPrefixCharacters = new StringBuilder();
+            for (char c : CONFIG.NICKNAME_PREFIX.getString().toCharArray()) {
+                if (!StringReader.isAllowedInUnquotedString(c))
+                    problematicPrefixCharacters.append(c);
+            }
+
+            if (!problematicPrefixCharacters.isEmpty()) {
+                LOGGER.error("The following characters in the nickname prefix will not work in commands: " + problematicPrefixCharacters);
+                LOGGER.error("[0-9a-zA-Z_-.+] are allowed.");
+            }
+        }
 
         ECPlaceholderRegistry.register();
         ECAbilitySources.init();
