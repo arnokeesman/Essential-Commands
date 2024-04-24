@@ -1,6 +1,5 @@
 plugins {
     id 'groovy'
-    id 'java-gradle-plugin'
     id 'fabric-loom' version '1.6-SNAPSHOT'
     id 'maven-publish'
     id "com.modrinth.minotaur" version "2.+"
