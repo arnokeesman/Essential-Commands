@@ -3,11 +3,12 @@ package dev.jpcode.eccore.util;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import static org.gradle.internal.impldep.org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("TextUtil")
 public class TextUtilTests {
@@ -22,8 +23,8 @@ public class TextUtilTests {
 
         var output = TextUtil.flattenRoot(input);
 
-        assertEquals(output.get(0).getContent(), input.getContent());
-        assertEquals(output.get(0).getStyle(), baseStyle);
+        assertEquals(output.getFirst().getContent(), input.getContent());
+        assertEquals(output.getFirst().getStyle(), baseStyle);
 
         var inputSiblings = input.getSiblings();
         for (int i = 1; i < output.size(); i++) {

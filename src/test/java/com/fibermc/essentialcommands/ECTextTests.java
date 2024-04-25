@@ -28,7 +28,7 @@ public class ECTextTests {
     }
 
     @Test
-    @DisplayName("getTextInternal - no interplolation")
+    @DisplayName("getTextInternal - no interpolation")
     void getTextInternal_FormatsCorrectly()
     {
         var expected = Text.literal("enabled").setStyle(TextFormatType.Default.getStyle());

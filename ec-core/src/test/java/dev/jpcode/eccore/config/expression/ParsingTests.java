@@ -3,7 +3,7 @@ package dev.jpcode.eccore.config.expression;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.gradle.internal.impldep.org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("ParsingTests")
 public class ParsingTests {
@@ -45,7 +45,7 @@ public class ParsingTests {
 
         var playerIsLegandary = expression.matches(playerPropertiesContext);
 
-        assertEquals(true, playerIsLegandary);
+        assertTrue(playerIsLegandary);
 
     }
 
@@ -63,7 +63,7 @@ public class ParsingTests {
 
         var playerIsLegandary = expression.matches(playerPropertiesContext);
 
-        assertEquals(false, playerIsLegandary);
+        assertFalse(playerIsLegandary);
 
     }
 
