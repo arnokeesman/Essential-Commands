@@ -22,11 +22,16 @@ public final class PlayerTeleporter {
 
     public static void requestTeleport(QueuedTeleport queuedTeleport) {
         ServerPlayerEntity player = queuedTeleport.getPlayerData().getPlayer();
-//        if (pData.getTpCooldown() < 0 || player.getServer().getPlayerManager().isOperator(player.getGameProfile())) {
-//            //send TP request to tpManager
-//        }
+        PlayerData pData = queuedTeleport.getPlayerData();
+
+        if (pData.getTpCooldown() > 0 && !playerHasTpRulesBypass(player, ECPerms.Registry.bypass_teleport_delay)) {
+            int remainingCooldown = (int) Math.ceil(pData.getTpCooldown() / 20d);
+            pData.sendError("teleport.error.cooldown", Text.of(String.valueOf(remainingCooldown)));
+            return;
+        }
+
         if (playerHasTpRulesBypass(player, ECPerms.Registry.bypass_teleport_delay) || CONFIG.TELEPORT_DELAY_TICKS <= 0) {
-            teleport(queuedTeleport.getPlayerData(), queuedTeleport.getDest(), queuedTeleport.getDestName());
+            teleport(pData, queuedTeleport.getDest(), queuedTeleport.getDestName());
         } else {
             TeleportManager.getInstance().queueTeleport(queuedTeleport);
         }
@@ -78,6 +83,8 @@ public final class PlayerTeleporter {
                 )
                 : destName
         );
+
+        TeleportManager.getInstance().startTpCooldown(playerEntity);
     }
 
     static boolean playerHasTpRulesBypass(ServerPlayerEntity player, String permission) {
