@@ -23,8 +23,8 @@ public class TextUtilTests {
 
         var output = TextUtil.flattenRoot(input);
 
-        assertEquals(output.getFirst().getContent(), input.getContent());
-        assertEquals(output.getFirst().getStyle(), baseStyle);
+        assertEquals(output.get(0).getContent(), input.getContent());
+        assertEquals(output.get(0).getStyle(), baseStyle);
 
         var inputSiblings = input.getSiblings();
         for (int i = 1; i < output.size(); i++) {
