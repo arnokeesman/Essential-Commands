@@ -42,6 +42,7 @@
   "cmd.tpask.receive": "${0} has requested to teleport to you.\nType '/tpaccept <name>' to accept or '/tpdeny <name>' to deny this request.",
   "cmd.tpask.send": "Teleport request has been sent to ${0}",
   "cmd.tpask.error.exists": "Request not sent. You already have a pending teleport request to ${0}",
+  "cmd.tpask.error.self": "You cannot teleport to yourself.",
   "cmd.tpaskhere.receive": "${0} has requested that you teleport to them.\nType '/tpaccept <name>' to accept or '/tpdeny <name>' to deny this request.",
   "cmd.tpcancel.feedback": "Teleport request to ${0} canceled.",
   "cmd.tpcancel.error.no_exists": "No active teleport request to cancel.",

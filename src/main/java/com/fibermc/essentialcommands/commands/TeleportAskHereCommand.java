@@ -27,6 +27,12 @@ public class TeleportAskHereCommand implements Command<ServerCommandSource> {
         var senderPlayerData = PlayerData.access(senderPlayer);
         var targetPlayerData = PlayerData.access(targetPlayer);
 
+        // Don't allow teleporting to self.
+        if (senderPlayer.getUuid().equals(targetPlayer.getUuid())) {
+            senderPlayerData.sendError("cmd.tpask.error.self");
+            return 0;
+        }
+
         // Don't allow spamming same target.
         {
             var existingTeleportRequest = senderPlayerData.getSentTeleportRequests()

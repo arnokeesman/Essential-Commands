@@ -27,12 +27,18 @@ public class TeleportAskCommand implements Command<ServerCommandSource> {
         var senderPlayerData = PlayerData.access(senderPlayer);
         var targetPlayerData = PlayerData.access(targetPlayer);
 
+        // Don't allow teleporting to self.
+        if (senderPlayer.getUuid().equals(targetPlayer.getUuid())) {
+            senderPlayerData.sendError("cmd.tpask.error.self");
+            return 0;
+        }
+
         // Don't allow spamming same target.
         {
             var existingTeleportRequest = senderPlayerData.getSentTeleportRequests()
                 .getRequestToPlayer(targetPlayerData);
             if (existingTeleportRequest.isPresent()) {
-                PlayerData.access(senderPlayer).sendCommandError(
+                senderPlayerData.sendCommandError(
                     "cmd.tpask.error.exists",
                     existingTeleportRequest.get().getTargetPlayer().getDisplayName());
                 return 0;
