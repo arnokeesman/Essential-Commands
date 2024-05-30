@@ -42,7 +42,7 @@ public final class RulesCommand {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void reload(MinecraftServer server) throws IOException {
-        Path mcDir = server.getRunDirectory().toPath();
+        Path mcDir = server.getRunDirectory().getFileName();
         var rulesFile = mcDir.resolve("config/essentialcommands/rules.txt").toFile();
         rulesFile.getParentFile().mkdirs();
         if (rulesFile.createNewFile()) {

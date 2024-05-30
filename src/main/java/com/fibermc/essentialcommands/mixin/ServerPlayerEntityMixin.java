@@ -25,7 +25,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProperties;
 
 import static com.fibermc.essentialcommands.EssentialCommands.BACKING_CONFIG;
 import static com.fibermc.essentialcommands.EssentialCommands.CONFIG;
@@ -62,12 +61,9 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntityMixin implemen
 
     @Inject(method = "teleport(Lnet/minecraft/server/world/ServerWorld;DDDFF)V", at = @At(
         value = "INVOKE",
-        target = "Lnet/minecraft/server/PlayerManager;sendPlayerStatus(Lnet/minecraft/server/network/ServerPlayerEntity;)V"
+        target = "Lnet/minecraft/server/network/ServerPlayerEntity;teleportTo(Lnet/minecraft/world/TeleportTarget;)Lnet/minecraft/entity/Entity;"
     ), locals = LocalCapture.CAPTURE_FAILSOFT)
-    public void onTeleportBetweenWorlds(
-        ServerWorld targetWorld, double x, double y, double z, float yaw, float pitch,
-        CallbackInfo ci,
-        ServerWorld serverWorld, WorldProperties worldProperties)
+    public void onTeleportBetweenWorlds(CallbackInfo ci)
     {
         var playerData = ((ServerPlayerEntityAccess) this).ec$getPlayerData();
         playerData.updatePlayerEntity((ServerPlayerEntity) (Object) this);
@@ -98,6 +94,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntityMixin implemen
         return prevQueuedTeleport;
     }
 
+    @SuppressWarnings("UnreachableCode")
     @Inject(method = "getPlayerListName", at = @At("RETURN"), cancellable = true)
     public void getPlayerListName(CallbackInfoReturnable<Text> cir) {
         if (EssentialCommandsConfig.getValueSafe(BACKING_CONFIG.NICKNAMES_IN_PLAYER_LIST, true)) {
@@ -109,6 +106,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntityMixin implemen
     @Unique
     public PlayerData ec$playerData;
 
+    @SuppressWarnings("UnreachableCode")
     @Override
     public PlayerData ec$getPlayerData() {
         if (ec$playerData != null) {
@@ -131,6 +129,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntityMixin implemen
     @Unique
     public PlayerProfile ec$profile;
 
+    @SuppressWarnings("UnreachableCode")
     @Override
     public PlayerProfile ec$getProfile() {
         if (ec$profile != null) {

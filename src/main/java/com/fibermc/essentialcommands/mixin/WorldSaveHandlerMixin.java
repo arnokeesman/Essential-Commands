@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.WorldSaveHandler;
+import net.minecraft.world.PlayerSaveHandler;
 
-@Mixin(WorldSaveHandler.class)
+@Mixin(PlayerSaveHandler.class)
 public class WorldSaveHandlerMixin {
 
     @Inject(method = "savePlayerData", at = @At("RETURN"))

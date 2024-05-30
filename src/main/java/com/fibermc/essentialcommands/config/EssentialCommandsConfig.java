@@ -122,12 +122,10 @@ public final class EssentialCommandsConfig extends Config<EssentialCommandsConfi
 //        NICKNAME_ABOVE_HEAD.changeEvent.register(ign -> {
 //            PlayerDataManager.getInstance().queueNicknameUpdatesForAllPlayers();
 //        });
-        NICKNAMES_IN_PLAYER_LIST.changeEvent.register(ign -> {
-            PlayerDataManager.getInstance().queueNicknameUpdatesForAllPlayers();
-        });
+        NICKNAMES_IN_PLAYER_LIST.changeEvent.register(ign -> PlayerDataManager.getInstance().queueNicknameUpdatesForAllPlayers());
 
 
-        RTP_ENABLED_WORLDS.changeEvent.register(configuredWorldIdStrings -> {
+        RTP_ENABLED_WORLDS.changeEvent.register(configuredWorldIdStrings ->
             ManagerLocator.getInstance().runAndQueue("RTP_ENABLED_WORLDS", server -> {
                 var worldIds = server.getWorldRegistryKeys().stream()
                     .map(RegistryKey::getValue)
@@ -136,21 +134,21 @@ public final class EssentialCommandsConfig extends Config<EssentialCommandsConfi
                 EssentialCommands.LOGGER.info("Possible world ids: {}", String.join(",", worldIds.stream().map(Identifier::toString).toList()));
 
                 var configuredWorldIds = configuredWorldIdStrings.stream()
-                    .map(Identifier::new)
+                    .map(Identifier::of)
                     .toList();
                 EssentialCommands.LOGGER.info("Configured `rtp_enabled_worlds` world ids: {}", String.join(",", configuredWorldIds.stream().map(Identifier::toString).toList()));
 
                 var validConfiguredWorldIds = configuredWorldIdStrings.stream()
-                    .map(Identifier::new)
+                    .map(Identifier::of)
                     .filter(worldIds::contains)
                     .collect(Collectors.toSet());
 
                 var invalidConfiguredWorldIds = configuredWorldIdStrings.stream()
-                    .map(Identifier::new)
+                    .map(Identifier::of)
                     .filter(v -> !worldIds.contains(v))
                     .toList();
 
-                if (invalidConfiguredWorldIds.size() > 0) {
+                if (!invalidConfiguredWorldIds.isEmpty()) {
                     EssentialCommands.LOGGER.warn("{} configured `rtp_enabled_worlds` world ids were invalid: {}", invalidConfiguredWorldIds.size(), String.join(",", invalidConfiguredWorldIds.stream().map(Identifier::toString).toList()));
                 } else {
                     EssentialCommands.LOGGER.info("All configured `rtp_enabled_worlds` world ids are valid.");
@@ -161,8 +159,7 @@ public final class EssentialCommandsConfig extends Config<EssentialCommandsConfi
                     .filter(k -> validConfiguredWorldIds.contains(k.getValue()))
                     .forEach(this.validRtpWorldIds::add);
                 EssentialCommands.refreshConfigSnapshot();
-            });
-        });
+            }));
     }
 
     private final HashSet<RegistryKey<World>> validRtpWorldIds = new HashSet<>();

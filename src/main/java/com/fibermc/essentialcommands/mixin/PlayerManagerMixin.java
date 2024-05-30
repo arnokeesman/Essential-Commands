@@ -1,7 +1,5 @@
 package com.fibermc.essentialcommands.mixin;
 
-import java.util.Optional;
-
 import com.fibermc.essentialcommands.ECAbilitySources;
 import com.fibermc.essentialcommands.events.PlayerConnectCallback;
 import com.fibermc.essentialcommands.events.PlayerLeaveCallback;
@@ -16,12 +14,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
 
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
@@ -54,16 +54,13 @@ public abstract class PlayerManagerMixin {
         // before the new ServerPlayerEntity is fully initialized.
         target = "Lnet/minecraft/server/network/ServerPlayerEntity;copyFrom(Lnet/minecraft/server/network/ServerPlayerEntity;Z)V"
     ), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void onRespawnPlayer(
-        ServerPlayerEntity oldServerPlayerEntity, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir
-        , BlockPos blockPos
-        , float f
-        , boolean bl
-        , ServerWorld serverWorld
-        , Optional optional
-        , ServerWorld serverWorld2
-        , ServerPlayerEntity serverPlayerEntity
-    ) {
+    public void onRespawnPlayer(ServerPlayerEntity oldServerPlayerEntity,
+                                boolean alive,
+                                Entity.RemovalReason removalReason,
+                                CallbackInfoReturnable<ServerPlayerEntity> cir,
+                                TeleportTarget teleportTarget,
+                                ServerWorld serverWorld,
+                                ServerPlayerEntity serverPlayerEntity) {
         PlayerDataManager.handlePlayerDataRespawnSync(oldServerPlayerEntity, serverPlayerEntity);
     }
 
@@ -73,16 +70,16 @@ public abstract class PlayerManagerMixin {
         // This target lets us modify respawn position
         target = "Lnet/minecraft/server/world/ServerWorld;getLevelProperties()Lnet/minecraft/world/WorldProperties;"
     ), locals = LocalCapture.CAPTURE_FAILHARD)
-    public void onRespawnPlayer_afterSetPosition(
-        ServerPlayerEntity oldServerPlayerEntity, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir
-        , BlockPos blockPos
-        , float f
-        , boolean bl
-        , ServerWorld serverWorld
-        , Optional optional
-        , ServerWorld serverWorld2
-        , ServerPlayerEntity serverPlayerEntity
-    ) {
+    public void onRespawnPlayer_afterSetPosition(ServerPlayerEntity oldServerPlayerEntity,
+                                                 boolean alive,
+                                                 Entity.RemovalReason removalReason,
+                                                 CallbackInfoReturnable<ServerPlayerEntity> cir,
+                                                 TeleportTarget teleportTarget,
+                                                 ServerWorld serverWorld,
+                                                 ServerPlayerEntity serverPlayerEntity,
+                                                 Vec3d vec3d,
+                                                 byte b,
+                                                 ServerWorld serverWorld2) {
         PlayerDataManager.handleRespawnAtEcSpawn(oldServerPlayerEntity, serverPlayerEntity);
         PlayerRespawnCallback.EVENT.invoker().onPlayerRespawn(oldServerPlayerEntity, serverPlayerEntity);
     }

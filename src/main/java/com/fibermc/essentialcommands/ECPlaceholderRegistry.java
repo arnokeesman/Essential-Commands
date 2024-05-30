@@ -12,7 +12,7 @@ final class ECPlaceholderRegistry {
     public static void register() {
         var namespace = EssentialCommands.MOD_ID;
         Placeholders.register(
-            new Identifier(namespace, "nickname"),
+            Identifier.of(namespace, "nickname"),
             (ctx, arg) -> {
                 if (ctx.hasPlayer()) {
                     return PlaceholderResult.value(

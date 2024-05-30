@@ -631,7 +631,7 @@ public final class EssentialCommandRegistry {
             essentialCommandsRootNode.addChild(CommandManager.literal("convertEssentialsXPlayerHomes")
                 .requires(source -> source.hasPermissionLevel(4))
                 .executes((source) -> {
-                    Path mcDir = source.getSource().getServer().getRunDirectory().toPath();
+                    Path mcDir = source.getSource().getServer().getRunDirectory().getFileName();
                     try {
                         EssentialsXParser.convertPlayerDataDir(
                             mcDir.resolve("plugins/Essentials/userdata").toFile(),
@@ -648,7 +648,7 @@ public final class EssentialCommandRegistry {
             essentialCommandsRootNode.addChild(CommandManager.literal("convertEssentialsXWarps")
                 .requires(source -> source.hasPermissionLevel(4))
                 .executes((source) -> {
-                    Path mcDir = source.getSource().getServer().getRunDirectory().toPath();
+                    Path mcDir = source.getSource().getServer().getRunDirectory().getFileName();
                     EssentialsConvertor.warpConvert(
                         source.getSource().getServer(),
                         mcDir.resolve("plugins/Essentials/warps").toFile()

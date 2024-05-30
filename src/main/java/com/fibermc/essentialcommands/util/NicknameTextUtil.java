@@ -42,7 +42,7 @@ public final class NicknameTextUtil {
                     || style.isObfuscated()
                     || style.isStrikethrough()
                     || style.isUnderlined())
-                || !style.getFont().equals(new Identifier("minecraft:default"))),
+                || !style.getFont().equals(Identifier.of("minecraft:default"))),
             (sourcePerms.click || (style.getClickEvent() == null)),
             (sourcePerms.hover || (style.getHoverEvent() == null))
         );
