@@ -42,12 +42,10 @@ public final class ChatConfirmationPrompt {
         this.text = TextUtil.spaceBetween(
             new Text[]{
                 confirmText.setStyle(
-                    confirmText.getStyle().withClickEvent(new ClickEvent(
-                        ClickEvent.Action.RUN_COMMAND,
+                    confirmText.getStyle().withClickEvent(new ClickEvent.RunCommand(
                         confirmCommandStr))),
                 denyText.setStyle(
-                    denyText.getStyle().withClickEvent(new ClickEvent(
-                        ClickEvent.Action.RUN_COMMAND,
+                    denyText.getStyle().withClickEvent(new ClickEvent.RunCommand(
                         denyCommandStr))),
             },
             64,
@@ -61,7 +59,7 @@ public final class ChatConfirmationPrompt {
         this.player = player;
         this.text = Text.literal(" ".repeat(15)).append(
             text.setStyle(text.getStyle().withClickEvent(
-                new ClickEvent(ClickEvent.Action.RUN_COMMAND, commandStr))));
+                new ClickEvent.RunCommand(commandStr))));
     }
 
     public void send() {

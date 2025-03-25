@@ -42,7 +42,7 @@ public class NamedLocationStorage extends HashMap<String, NamedMinecraftLocation
             }
         } else {
             NbtCompound nbtCompound = (NbtCompound) nbt;
-            nbtCompound.getKeys().forEach((key) -> super.put(key, NamedMinecraftLocation.fromNbt(nbtCompound.getCompound(key), key)));
+            nbtCompound.getKeys().forEach((key) -> super.put(key, NamedMinecraftLocation.fromNbt(nbtCompound.getCompoundOrEmpty(key), key)));
         }
     }
 

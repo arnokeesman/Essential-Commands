@@ -104,23 +104,23 @@ public class PlayerProfile extends PersistentState implements IServerPlayerEntit
     }
 
     public void fromNbt(NbtCompound tag) {
-        NbtCompound dataTag = tag.getCompound("data");
+        NbtCompound dataTag = tag.getCompoundOrEmpty("data");
         this.profileOptions = new ProfileOptions();
 
         this.profileOptions.formattingDefault = Optional.ofNullable(dataTag.get(StorageKey.FORMATTING_DEAULT))
-            .map(NbtElement::asString)
-            .map(ConfigUtil::parseStyle);
+            .flatMap(NbtElement::asString)
+            .flatMap(s -> Optional.ofNullable(ConfigUtil.parseStyle(s)));
 
         this.profileOptions.formattingAccent = Optional.ofNullable(dataTag.get(StorageKey.FORMATTING_ACCENT))
-            .map(NbtElement::asString)
-            .map(ConfigUtil::parseStyle);
+            .flatMap(NbtElement::asString)
+            .flatMap(s -> Optional.ofNullable(ConfigUtil.parseStyle(s)));
 
         this.profileOptions.formattingError = Optional.ofNullable(dataTag.get(StorageKey.FORMATTING_ERROR))
-            .map(NbtElement::asString)
-            .map(ConfigUtil::parseStyle);
+            .flatMap(NbtElement::asString)
+            .flatMap(s -> Optional.ofNullable(ConfigUtil.parseStyle(s)));
 
         this.profileOptions.printTeleportCoordinates = dataTag.contains(StorageKey.PRINT_TELEPORT_COORDINATES)
-            ? Optional.of(dataTag.getBoolean(StorageKey.PRINT_TELEPORT_COORDINATES))
+            ? Optional.of(dataTag.getBoolean(StorageKey.PRINT_TELEPORT_COORDINATES).orElseThrow())
             : Optional.empty();
     }
 

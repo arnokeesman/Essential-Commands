@@ -20,8 +20,14 @@ import com.fibermc.essentialcommands.types.MinecraftLocation;
 import com.fibermc.essentialcommands.types.NamedLocationStorage;
 import com.fibermc.essentialcommands.types.NamedMinecraftLocation;
 import com.fibermc.essentialcommands.util.NicknameTextUtil;
+
+import com.mojang.serialization.Codec;
+
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
+
+import net.minecraft.nbt.NbtOps;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.brigadier.context.CommandContext;
@@ -322,8 +328,13 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
     }
 
     public void fromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
-        NbtCompound dataTag = tag.getCompound("data");
-        this.pUuid = dataTag.getUuid(StorageKey.PLAYER_UUID);
+        NbtCompound dataTag = tag.getCompoundOrEmpty("data");
+        Optional<String> uuidOptional = dataTag.get(StorageKey.PLAYER_UUID, Codec.STRING, NbtOps.INSTANCE);
+        if (uuidOptional.isPresent()) {
+            this.pUuid = UUID.fromString(uuidOptional.get());
+        } else {
+            EssentialCommands.LOGGER.warn("PlayerData NBT did not contain a UUID. This is likely a bug.");
+        }
 
         NamedLocationStorage homes = new NamedLocationStorage();
         NbtElement homesTag = dataTag.get(StorageKey.HOMES);
@@ -333,23 +344,26 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
         this.homes = homes;
 
         if (dataTag.contains(StorageKey.NICKNAME)) {
-            String nick = dataTag.getString(StorageKey.NICKNAME);
-            if (!Objects.equals(nick, "null")) {
+            dataTag.getString(StorageKey.NICKNAME).ifPresent((nick) -> {
                 this.nickname = Text.Serialization.fromJson(nick, wrapperLookup);
                 try {
                     reloadFullNickname();
                 } catch (NullPointerException ignore) {
                     EssentialCommands.LOGGER.warn("Could not refresh player full nickanme, as ServerPlayerEntity was null in PlayerData.");
                 }
-            }
+            });
         }
 
         if (dataTag.contains(StorageKey.TIME_USED_RTP_EPOCH_MS)) {
-            this.timeUsedRtp = TimeUtil.epochTimeMsToTicks(dataTag.getLong(StorageKey.TIME_USED_RTP_EPOCH_MS));
+            dataTag.getLong(StorageKey.TIME_USED_RTP_EPOCH_MS).ifPresent((time) -> {
+                this.timeUsedRtp = TimeUtil.epochTimeMsToTicks(time);
+            });
         }
 
         if (CONFIG.PERSIST_BACK_LOCATION && dataTag.contains(StorageKey.PREVIOUS_LOCATION)) {
-            this.previousLocation = MinecraftLocation.fromNbt(dataTag.getCompound(StorageKey.PREVIOUS_LOCATION));
+            dataTag.getCompound(StorageKey.PREVIOUS_LOCATION).ifPresent((nbt) -> {
+                this.previousLocation = MinecraftLocation.fromNbt(nbt);
+            });
         }
 
         if (this.player != null) {
@@ -360,7 +374,7 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
 
     @Override
     public NbtCompound writeNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
-        tag.putUuid(StorageKey.PLAYER_UUID, pUuid);
+        tag.put(StorageKey.PLAYER_UUID, Codec.STRING, pUuid.toString());
 
         NbtCompound homesNbt = new NbtCompound();
         homes.writeNbt(homesNbt);
@@ -551,7 +565,7 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
 
         if (CONFIG.NICK_REVEAL_ON_HOVER) {
             tempFullNickname.setStyle(tempFullNickname.getStyle().withHoverEvent(
-                new HoverEvent(HoverEvent.Action.SHOW_TEXT, baseName)
+                new HoverEvent.ShowText(baseName)
             ));
         }
 

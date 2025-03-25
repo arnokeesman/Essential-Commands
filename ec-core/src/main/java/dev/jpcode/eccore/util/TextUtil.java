@@ -171,8 +171,8 @@ public final class TextUtil {
         String teleportCommand = String.format("%s %s", commandBaseString, destinationName);
 
         Style outStyle = originalText.getStyle()
-            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, teleportCommand))
-            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to teleport to "
+            .withClickEvent(new ClickEvent.RunCommand(teleportCommand))
+            .withHoverEvent(new HoverEvent.ShowText(Text.literal("Click to teleport to "
                 + destinationName
                 + ".")));
 

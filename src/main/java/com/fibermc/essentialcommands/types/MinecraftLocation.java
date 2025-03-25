@@ -55,15 +55,15 @@ public class MinecraftLocation {
     public MinecraftLocation(NbtCompound tag) {
         this.dim = RegistryKey.of(
             RegistryKeys.WORLD,
-            Identifier.tryParse(tag.getString("WorldRegistryKey"))
+            Identifier.tryParse(tag.getString("WorldRegistryKey").orElseThrow())
         );
         this.pos = new Vec3d(
-            tag.getDouble("x"),
-            tag.getDouble("y"),
-            tag.getDouble("z")
+            tag.getDouble("x").orElseThrow(),
+            tag.getDouble("y").orElseThrow(),
+            tag.getDouble("z").orElseThrow()
         );
-        this.headYaw = tag.getFloat("headYaw");
-        this.pitch = tag.getFloat("pitch");
+        this.headYaw = tag.getFloat("headYaw").orElseThrow();
+        this.pitch = tag.getFloat("pitch").orElseThrow();
     }
 
     public static MinecraftLocation fromNbt(NbtCompound tag) {
@@ -75,15 +75,15 @@ public class MinecraftLocation {
     protected void loadNbt(NbtCompound tag) {
         this.dim = RegistryKey.of(
             RegistryKeys.WORLD,
-            Identifier.tryParse(tag.getString("WorldRegistryKey"))
+            Identifier.tryParse(tag.getString("WorldRegistryKey").orElseThrow())
         );
         this.pos = new Vec3d(
-            tag.getDouble("x"),
-            tag.getDouble("y"),
-            tag.getDouble("z")
+            tag.getDouble("x").orElseThrow(),
+            tag.getDouble("y").orElseThrow(),
+            tag.getDouble("z").orElseThrow()
         );
-        this.headYaw = tag.getFloat("headYaw");
-        this.pitch = tag.getFloat("pitch");
+        this.headYaw = tag.getFloat("headYaw").orElseThrow();
+        this.pitch = tag.getFloat("pitch").orElseThrow();
     }
 
     public NbtCompound asNbt() {

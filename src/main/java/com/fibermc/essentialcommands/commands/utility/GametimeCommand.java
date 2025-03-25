@@ -52,6 +52,6 @@ public class GametimeCommand implements Command<ServerCommandSource> {
                 Text.literal(formatGameTimeOfDay(time)).setStyle(styleProvider.getStyle(TextFormatType.Accent)))
             .setStyle(styleProvider.getStyle(TextFormatType.Default)
                 .withHoverEvent(
-                    new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(String.valueOf(time % 24000L)))));
+                    new HoverEvent.ShowText(Text.literal(String.valueOf(time % 24000L)))));
     }
 }

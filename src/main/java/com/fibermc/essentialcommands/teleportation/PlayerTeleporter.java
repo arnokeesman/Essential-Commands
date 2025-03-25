@@ -115,7 +115,7 @@ public final class PlayerTeleporter {
 
         return playerWorld.getEntitiesByClass(TameableEntity.class, new Box(playerPos).expand(radius), pet -> {
             boolean isTamed = pet.isTamed();
-            UUID ownerUuid = pet.getOwnerUuid();
+            UUID ownerUuid = Objects.requireNonNull(pet.getOwner()).getUuid();
             boolean isSameOwner = ownerUuid != null && ownerUuid.equals(playerEntity.getUuid());
             boolean isSitting = pet.isSitting();
 
