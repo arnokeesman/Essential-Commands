@@ -531,7 +531,7 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
     }
 
     public void save(RegistryWrapper.WrapperLookup wrapperLookup) {
-        NbtCompound data = this.toNbt(wrapperLookup);
+        NbtCompound data = this.writeNbt(new NbtCompound(), wrapperLookup);
 
         try {
             NbtIo.writeCompressed(data, this.saveFile.toPath());

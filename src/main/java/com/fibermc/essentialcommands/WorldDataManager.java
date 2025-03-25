@@ -104,7 +104,7 @@ public class WorldDataManager extends PersistentState {
 
     public void save(RegistryWrapper.WrapperLookup wrapperLookup) {
         EssentialCommands.log(Level.INFO, "Saving world_data.dat (Spawn/Warps)...");
-        NbtCompound data = this.toNbt(wrapperLookup);
+        NbtCompound data = this.writeNbt(new NbtCompound(), wrapperLookup);
         try {
             NbtIo.writeCompressed(data, this.worldDataFile.toPath());
         } catch (IOException e) {
