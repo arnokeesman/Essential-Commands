@@ -21,15 +21,13 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Style;
-import net.minecraft.world.PersistentState;
 
 import dev.jpcode.eccore.config.ConfigUtil;
 
-public class PlayerProfile extends PersistentState implements IServerPlayerEntityData, IStyleProvider {
+public class PlayerProfile implements IServerPlayerEntityData, IStyleProvider {
 
     private ServerPlayerEntity player;
     private final File saveFile;
@@ -124,8 +122,9 @@ public class PlayerProfile extends PersistentState implements IServerPlayerEntit
             : Optional.empty();
     }
 
-    @Override
-    public NbtCompound writeNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
+    private NbtCompound writeNbt() {
+        NbtCompound tag = new NbtCompound();
+
         this.profileOptions.formattingDefault
             .ifPresent(style -> tag.putString(StorageKey.FORMATTING_DEAULT, ConfigUtil.serializeStyle(style)));
 
@@ -141,8 +140,9 @@ public class PlayerProfile extends PersistentState implements IServerPlayerEntit
         return tag;
     }
 
-    public void save(RegistryWrapper.WrapperLookup wrapperLookup) {
-        NbtCompound data = this.writeNbt(new NbtCompound(), wrapperLookup);
+    public void save() {
+        NbtCompound data = new NbtCompound();
+        data.put("data", this.writeNbt());
 
         try {
             NbtIo.writeCompressed(data, this.saveFile.toPath());

@@ -67,6 +67,9 @@ public class MinecraftLocation {
     }
 
     public static MinecraftLocation fromNbt(NbtCompound tag) {
+        if (tag.isEmpty()) {
+            return null;
+        }
         var loc = new MinecraftLocation();
         loc.loadNbt(tag);
         return loc;

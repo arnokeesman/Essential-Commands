@@ -51,13 +51,14 @@ public class BedCommand implements Command<ServerCommandSource> {
      * block)
      */
     private static Optional<MinecraftLocation> getSafeSpawnPos(ServerPlayerEntity player) {
-        var spawnPos = player.getSpawnPointPosition();
-        if (spawnPos == null) {
+        var respawn = player.getRespawn();
+        if (respawn == null) {
             return Optional.empty();
         }
 
-        var spawnDim = player.getSpawnPointDimension();
-        var spawnAngle = player.getSpawnAngle();
+        var spawnPos = respawn.pos();
+        var spawnDim = respawn.dimension();
+        var spawnAngle = respawn.angle();
 
         var world = Objects.requireNonNull(player.getServer()).getWorld(spawnDim);
 

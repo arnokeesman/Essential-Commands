@@ -22,17 +22,14 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtSizeTracker;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.WorldSavePath;
-import net.minecraft.world.PersistentState;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
-public class WorldDataManager extends PersistentState {
+public class WorldDataManager {
     private final WarpStorage warps;
     private MinecraftLocation spawnLocation;
     private Path saveDir;
@@ -69,8 +66,7 @@ public class WorldDataManager extends PersistentState {
                 // if files was not JUST created, read data from it.
                 this.fromNbt(NbtIo.readCompressed(worldDataFile.toPath(), NbtSizeTracker.ofUnlimitedBytes()).getCompoundOrEmpty("data"));
             } else {
-                this.markDirty();
-                this.save(server.getRegistryManager());
+                this.save();
             }
         } catch (IOException e) {
             EssentialCommands.log(Level.ERROR, String.format("An unexpected error occoured while loading the Essential Commands World Data file (Path: '%s')", worldDataFile.getPath()));
@@ -83,12 +79,8 @@ public class WorldDataManager extends PersistentState {
     }
 
     public void fromNbt(NbtCompound tag) {
-        MinecraftLocation tempSpawnLocation = MinecraftLocation.fromNbt(tag.getCompoundOrEmpty(SPAWN_KEY));
-        if (tempSpawnLocation.dim().getValue().getPath().isEmpty()) {
-            this.spawnLocation = null;
-        } else {
-            this.spawnLocation = tempSpawnLocation;
-        }
+        this.spawnLocation = MinecraftLocation.fromNbt(tag.getCompoundOrEmpty(SPAWN_KEY));
+
         NbtCompound warpsNbt = tag.getCompoundOrEmpty(WARPS_KEY);
         warps.loadNbt(warpsNbt);
         warpsLoadEvent.invoker().accept(warps);
@@ -102,9 +94,10 @@ public class WorldDataManager extends PersistentState {
             }
         });
 
-    public void save(RegistryWrapper.WrapperLookup wrapperLookup) {
+    public void save() {
         EssentialCommands.log(Level.INFO, "Saving world_data.dat (Spawn/Warps)...");
-        NbtCompound data = this.writeNbt(new NbtCompound(), wrapperLookup);
+        NbtCompound data = new NbtCompound();
+        data.put("data", this.writeNbt());
         try {
             NbtIo.writeCompressed(data, this.worldDataFile.toPath());
         } catch (IOException e) {
@@ -113,8 +106,8 @@ public class WorldDataManager extends PersistentState {
         EssentialCommands.log(Level.INFO, "world_data.dat saved.");
     }
 
-    @Override
-    public NbtCompound writeNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
+    private NbtCompound writeNbt() {
+        NbtCompound tag = new NbtCompound();
         // Spawn to NBT
         NbtElement spawnNbt = spawnLocation != null
             ? spawnLocation.asNbt()
@@ -137,14 +130,12 @@ public class WorldDataManager extends PersistentState {
             requiresPermission ? warpName : null,
             warpName
         ));
-        this.markDirty();
-        this.save(DynamicRegistryManager.EMPTY);
+        this.save();
     }
 
     public boolean delWarp(String warpName) {
         MinecraftLocation prevValue = warps.remove(warpName);
-        this.markDirty();
-        this.save(DynamicRegistryManager.EMPTY);
+        this.save();
         return prevValue != null;
     }
 
@@ -169,8 +160,7 @@ public class WorldDataManager extends PersistentState {
 
     public void setSpawn(MinecraftLocation location) {
         spawnLocation = location;
-        this.markDirty();
-        this.save(DynamicRegistryManager.EMPTY);
+        this.save();
     }
 
     public Optional<MinecraftLocation> getSpawn() {

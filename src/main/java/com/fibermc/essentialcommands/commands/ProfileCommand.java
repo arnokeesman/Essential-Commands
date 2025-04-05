@@ -32,8 +32,7 @@ public final class ProfileCommand {
                     var player = context.getSource().getPlayerOrThrow();
                     var profile = ((ServerPlayerEntityAccess) player).ec$getProfile();
                     option.profileSetter().setValue(context, "value", profile);
-                    profile.markDirty();
-                    profile.save(context.getSource().getServer().getRegistryManager());
+                    profile.save();
                     return 0;
                 }))
             );

@@ -43,7 +43,6 @@ public final class PlayerDataFactory {
                 e.printStackTrace();
             }
         } else {
-            pData.markDirty();
             pData.save(DynamicRegistryManager.EMPTY);
         }
 
@@ -80,7 +79,6 @@ public final class PlayerDataFactory {
             }
         }
 
-        pData.markDirty();
         return pData;
     }
 

@@ -3,6 +3,7 @@ package com.fibermc.essentialcommands.mixin;
 import com.fibermc.essentialcommands.access.ServerPlayerEntityAccess;
 import com.fibermc.essentialcommands.playerdata.PlayerData;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -19,6 +20,10 @@ import static com.fibermc.essentialcommands.EssentialCommands.CONFIG;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin {
+
+    @Shadow
+    public abstract boolean isSpectator();
+
     @Inject(method = "getDisplayName", at = @At("RETURN"))
     public void onGetDisplayName(CallbackInfoReturnable<Text> cir) {
 

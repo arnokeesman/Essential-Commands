@@ -44,7 +44,6 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.PersistentState;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
@@ -54,7 +53,7 @@ import dev.jpcode.eccore.util.TimeUtil;
 
 import static com.fibermc.essentialcommands.EssentialCommands.CONFIG;
 
-public class PlayerData extends PersistentState implements IServerPlayerEntityData, IFeedbackReceiver {
+public class PlayerData implements IServerPlayerEntityData, IFeedbackReceiver {
 
     // ServerPlayerEntity
     private ServerPlayerEntity player;
@@ -158,7 +157,6 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
         int playerMaxHomes = ECPerms.getHighestNumericPermission(this.player.getCommandSource(), ECPerms.Registry.Group.home_limit_group);
         if (this.homes.size() < playerMaxHomes) {
             homes.putCommand(homeName, minecraftLocation);
-            this.markDirty();
         } else {
             var ecText = ECText.access(this.player);
             var homeNameText = ecText.accent(homeName);
@@ -372,8 +370,8 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
 
     }
 
-    @Override
-    public NbtCompound writeNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
+    private NbtCompound writeNbt(RegistryWrapper.WrapperLookup wrapperLookup) {
+        NbtCompound tag = new NbtCompound();
         tag.put(StorageKey.PLAYER_UUID, Codec.STRING, pUuid.toString());
 
         NbtCompound homesNbt = new NbtCompound();
@@ -395,7 +393,6 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
 
     public void setPreviousLocation(MinecraftLocation location) {
         this.previousLocation = location;
-        this.markDirty();
     }
 
     public MinecraftLocation getPreviousLocation() {
@@ -411,11 +408,7 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
      */
     public boolean removeHome(String homeName) {
         MinecraftLocation old = this.homes.remove(homeName);
-        if (old != null) {
-            this.markDirty();
-            return true;
-        }
-        return false;
+        return old != null;
     }
 
     @Override
@@ -524,14 +517,14 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
 
         reloadFullNickname();
         PlayerDataManager.getInstance().markNicknameDirty(this);
-        this.markDirty();
         // Return codes based on fail/success
         //  ex: caused by profanity filter.
         return resultCode;
     }
 
     public void save(RegistryWrapper.WrapperLookup wrapperLookup) {
-        NbtCompound data = this.writeNbt(new NbtCompound(), wrapperLookup);
+        NbtCompound data = new NbtCompound();
+        data.put("data", this.writeNbt(wrapperLookup));
 
         try {
             NbtIo.writeCompressed(data, this.saveFile.toPath());
@@ -542,7 +535,6 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
 
     public void setTimeUsedRtp(int i) {
         this.timeUsedRtp = i;
-        this.markDirty();
     }
 
     public int getTimeUsedRtp() {

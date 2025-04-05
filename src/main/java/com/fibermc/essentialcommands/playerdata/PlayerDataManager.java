@@ -269,7 +269,7 @@ public class PlayerDataManager {
                 private boolean hasNoBed() {
                     return (
                         oldPlayerEntity == null ||
-                        oldPlayerEntity.getSpawnPointPosition() == null
+                        oldPlayerEntity.getRespawn() == null
                     );
                 }
 

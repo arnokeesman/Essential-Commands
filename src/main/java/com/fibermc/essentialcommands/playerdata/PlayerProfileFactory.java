@@ -2,7 +2,6 @@ package com.fibermc.essentialcommands.playerdata;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 import com.fibermc.essentialcommands.EssentialCommands;
 import com.fibermc.essentialcommands.util.FileUtil;
@@ -36,8 +35,7 @@ public final class PlayerProfileFactory {
                 e.printStackTrace();
             }
         } else {
-            pData.markDirty();
-            pData.save(Objects.requireNonNull(player.getServer()).getRegistryManager());
+            pData.save();
         }
 
         return pData;
