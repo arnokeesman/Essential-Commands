@@ -21,12 +21,12 @@ import com.fibermc.essentialcommands.types.NamedLocationStorage;
 import com.fibermc.essentialcommands.types.NamedMinecraftLocation;
 import com.fibermc.essentialcommands.util.NicknameTextUtil;
 
-import com.mojang.serialization.Codec;
-
 import io.github.ladysnake.pal.Pal;
 import io.github.ladysnake.pal.VanillaAbilities;
 
 import net.minecraft.nbt.NbtOps;
+
+import net.minecraft.util.Uuids;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -327,12 +327,8 @@ public class PlayerData implements IServerPlayerEntityData, IFeedbackReceiver {
 
     public void fromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup wrapperLookup) {
         NbtCompound dataTag = tag.getCompoundOrEmpty("data");
-        Optional<String> uuidOptional = dataTag.get(StorageKey.PLAYER_UUID, Codec.STRING, NbtOps.INSTANCE);
-        if (uuidOptional.isPresent()) {
-            this.pUuid = UUID.fromString(uuidOptional.get());
-        } else {
-            EssentialCommands.LOGGER.warn("PlayerData NBT did not contain a UUID. This is likely a bug.");
-        }
+        dataTag.get(StorageKey.PLAYER_UUID, Uuids.INT_STREAM_CODEC, NbtOps.INSTANCE)
+            .ifPresentOrElse(uuid -> this.pUuid = uuid, () -> EssentialCommands.LOGGER.warn("PlayerData NBT did not contain a UUID. This is likely a bug."));
 
         NamedLocationStorage homes = new NamedLocationStorage();
         NbtElement homesTag = dataTag.get(StorageKey.HOMES);
@@ -372,7 +368,7 @@ public class PlayerData implements IServerPlayerEntityData, IFeedbackReceiver {
 
     private NbtCompound writeNbt(RegistryWrapper.WrapperLookup wrapperLookup) {
         NbtCompound tag = new NbtCompound();
-        tag.put(StorageKey.PLAYER_UUID, Codec.STRING, pUuid.toString());
+        tag.put(StorageKey.PLAYER_UUID, Uuids.INT_STREAM_CODEC, pUuid);
 
         NbtCompound homesNbt = new NbtCompound();
         homes.writeNbt(homesNbt);
