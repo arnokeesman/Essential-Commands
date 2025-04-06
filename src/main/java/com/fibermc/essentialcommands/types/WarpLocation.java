@@ -28,14 +28,11 @@ public class WarpLocation extends NamedMinecraftLocation {
     }
 
     public static WarpLocation fromNbt(NbtCompound tag, String name) {
-        String permissionString1 = String.valueOf(tag.getString("permissionString"));
-        if (Objects.equals(permissionString1, "")) {
-            permissionString1 = null;
-        }
+        String permissionString = tag.getString("permissionString", null);
 
         var loc = new WarpLocation();
         loc.loadNbt(tag, name);
-        loc.permissionString = permissionString1;
+        loc.permissionString = permissionString;
         return loc;
     }
 
