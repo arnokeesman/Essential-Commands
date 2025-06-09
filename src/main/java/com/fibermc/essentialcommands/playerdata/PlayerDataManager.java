@@ -286,7 +286,7 @@ public class PlayerDataManager {
                         case Always -> true;
                         case SameWorld -> isSameWorld();
                         case NoBed -> hasNoBed();
-                        case FirstJoin -> oldPlayerEntity == null;
+//                        case FirstJoin -> oldPlayerEntity == null;
                     };
                 }
             };

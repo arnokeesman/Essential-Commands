@@ -5,5 +5,5 @@ public enum RespawnCondition {
     Always,
     NoBed,
     SameWorld,
-    FirstJoin
+//    FirstJoin
 }

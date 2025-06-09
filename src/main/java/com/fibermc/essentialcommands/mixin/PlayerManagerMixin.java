@@ -58,10 +58,11 @@ public abstract class PlayerManagerMixin {
         @Local(ordinal = 0, argsOnly = true) ServerPlayerEntity player,
         @Local(ordinal = 0) Optional playerNbt
     ) {
-        if (playerNbt.isPresent()) {
-            // player data existed, definitely isn't first join
-            return original;
-        }
+        // disable check for custom version
+//        if (playerNbt.isPresent()) {
+//            // player data existed, definitely isn't first join
+//            return original;
+//        }
 
         MinecraftLocation[] location = new MinecraftLocation[1];
         PlayerDataManager.handleRespawnAtEcSpawn(null, (spawnPos) -> {
