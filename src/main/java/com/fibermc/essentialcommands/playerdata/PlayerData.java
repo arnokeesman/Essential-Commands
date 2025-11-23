@@ -12,6 +12,7 @@ import com.fibermc.essentialcommands.commands.InvulnCommand;
 import com.fibermc.essentialcommands.commands.helpers.IFeedbackReceiver;
 import com.fibermc.essentialcommands.events.PlayerActCallback;
 import com.fibermc.essentialcommands.teleportation.OutgoingTeleportRequests;
+import com.fibermc.essentialcommands.teleportation.TeleportManager;
 import com.fibermc.essentialcommands.teleportation.TeleportRequest;
 import com.fibermc.essentialcommands.text.ECText;
 import com.fibermc.essentialcommands.text.TextFormatType;
@@ -316,6 +317,7 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
         static final String NICKNAME = "nickname";
         static final String TIME_USED_RTP_EPOCH_MS = "timeUsedRtpEpochMs";
         static final String PREVIOUS_LOCATION = "previousLocation";
+        static final String TP_COOLDOWN = "tpCooldown";
     }
 
     public void fromNbt(NbtCompound tag) {
@@ -346,6 +348,11 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
             this.previousLocation = MinecraftLocation.fromNbt(dataTag.getCompound(StorageKey.PREVIOUS_LOCATION));
         }
 
+        if (dataTag.contains(StorageKey.TP_COOLDOWN)) {
+            this.tpCooldown = dataTag.getInt(StorageKey.TP_COOLDOWN);
+            TeleportManager.getInstance().startTpCooldown(this, this.tpCooldown);
+        }
+
         if (this.player != null) {
             updatePlayerEntity(this.player);
         }
@@ -363,6 +370,8 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
         tag.putString(StorageKey.NICKNAME, Text.Serializer.toJson(nickname));
 
         tag.putLong(StorageKey.TIME_USED_RTP_EPOCH_MS, TimeUtil.tickTimeToEpochMs(timeUsedRtp));
+
+        tag.putInt(StorageKey.TP_COOLDOWN, tpCooldown);
 
         if (CONFIG.PERSIST_BACK_LOCATION && previousLocation != null) {
             tag.put(StorageKey.PREVIOUS_LOCATION, previousLocation.asNbt());
@@ -449,6 +458,7 @@ public class PlayerData extends PersistentState implements IServerPlayerEntityDa
 
     public void setTpCooldown(int cooldown) {
         this.tpCooldown = cooldown;
+        this.markDirty();
     }
 
     public Optional<MutableText> getNickname() {

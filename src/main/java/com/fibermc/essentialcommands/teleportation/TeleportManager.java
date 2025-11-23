@@ -136,7 +136,11 @@ public final class TeleportManager {
         final int teleportCooldownTicks = (int) (CONFIG.TELEPORT_COOLDOWN * TimeUtil.TPS);
         var playerData = PlayerData.access(player);
 
-        playerData.setTpCooldown(teleportCooldownTicks);
+        startTpCooldown(playerData, teleportCooldownTicks);
+    }
+
+    public void startTpCooldown(PlayerData playerData, int ticks) {
+        playerData.setTpCooldown(ticks);
         playersOnTeleportCooldown.add(playerData);
     }
 
