@@ -203,8 +203,12 @@ public class PlayerDataManager {
             }
 
             private boolean hasNoBed() {
-                var vanillaPlayerSpawnPoint = oldPlayerEntity.getSpawnPointPosition();
-                return vanillaPlayerSpawnPoint == null;
+                return (
+                    oldPlayerEntity == null ||
+                    // This is not perfect, but 'respawn' is horribly
+                    // complex to navigate now
+                    oldPlayerEntity.getSpawnPointPosition() == null
+                );
             }
 
             @Override
