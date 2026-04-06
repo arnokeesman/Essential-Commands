@@ -37,8 +37,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.permissions.Permission;
 import net.minecraft.server.permissions.PermissionLevel;
 
-import static com.fibermc.essentialcommands.EssentialCommands.BACKING_CONFIG;
-import static com.fibermc.essentialcommands.EssentialCommands.CONFIG;
+import static com.fibermc.essentialcommands.EssentialCommands.*;
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 
@@ -474,10 +473,11 @@ public final class EssentialCommandRegistry {
         }
 
         if (CONFIG.ENABLE_SLEEP) {
-            registerNode.accept(Commands.literal("sleep")
-                .requires(ECPerms.require(ECPerms.Registry.sleep, 0))
-                .executes(new SleepCommand())
-                .build());
+            LOGGER.warn("Essential Commands 'sleep' command is force-disabled to avoid a bug in this release");
+//            registerNode.accept(Commands.literal("sleep")
+//                .requires(ECPerms.require(ECPerms.Registry.sleep, 0))
+//                .executes(new SleepCommand())
+//                .build());
         }
 
         registerNode.accept(Commands.literal("lastPos")
