@@ -12,6 +12,7 @@ import net.minecraft.server.Bootstrap;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.ChatFormatting;
 
@@ -73,7 +74,7 @@ public class ECTextTests {
         var contents = assertInstanceOf(TranslatableContents.class, actual.getContents());
         assertEquals(1, contents.getArgs().length);
         var preppedArg = (Component) contents.getArgs()[0];
-        assertEquals(ChatFormatting.WHITE.getColor().intValue(), preppedArg.getStyle().getColor().getValue());
+        assertEquals(TextColor.WHITE.getValue(), preppedArg.getStyle().getColor().getValue());
     }
 
     @Test
@@ -85,7 +86,7 @@ public class ECTextTests {
 
         var contents = assertInstanceOf(TranslatableContents.class, actual.getContents());
         var preppedArg = (Component) contents.getArgs()[0];
-        assertEquals(ChatFormatting.AQUA.getColor().intValue(), preppedArg.getStyle().getColor().getValue());
+        assertEquals(TextColor.AQUA.getValue(), preppedArg.getStyle().getColor().getValue());
     }
 
     @Test

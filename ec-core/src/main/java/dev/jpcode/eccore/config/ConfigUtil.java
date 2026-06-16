@@ -4,9 +4,9 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.GsonHelper;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonSyntaxException;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import dev.jpcode.eccore.util.TimeUtil;
 
@@ -50,9 +51,9 @@ public final class ConfigUtil {
     @Nullable
     public static Style parseStyle(String styleStr) {
         Style outStyle = null;
-        ChatFormatting formatting = ChatFormatting.getByName(styleStr);
-        if (formatting != null) {
-            outStyle = Style.EMPTY.applyFormat(formatting);
+        DataResult<TextColor> formatting = TextColor.parseColor(styleStr);
+        if (formatting.isSuccess()) {
+            outStyle = Style.EMPTY.withColor(formatting.getOrThrow());
         }
 
         if (outStyle == null) {
